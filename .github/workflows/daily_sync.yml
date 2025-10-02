@@ -12,25 +12,18 @@ jobs:
       - name: Checkout fork
         uses: actions/checkout@v4
         with:
-          persist-credentials: false
+          fetch-depth: 0
 
-      - name: Set up Git
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-      - name: Add upstream remote
-        run: git remote add upstream https://github.com/ORIGINAL_OWNER/ORIGINAL_REPO.git
+      - name: Add upstream
+        run: git remote add upstream https://github.com/dbt-labs/dbt-core.git
 
       - name: Fetch upstream
         run: git fetch upstream
 
       - name: Merge upstream changes
-        run: |
-          git checkout main
-          git merge upstream/main --no-edit || true
+        run: git merge --ff-only upstream/main
 
-      - name: Push changes
+      - name: Push changes to fork
         run: git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
